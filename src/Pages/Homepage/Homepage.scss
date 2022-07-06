@@ -1,0 +1,22 @@
+.Homepage__login{
+    position: absolute;
+    right: 15%;
+    top: 30%;
+    width: 20em;
+}
+.Homepage__title{
+    position: absolute;
+    z-index: 9;
+    left: 10%;
+    top: 35%;
+    width: 30em;
+    color: #fff;
+    h1{
+        font-size: 4em;
+    }
+    h2{
+        color: transparent;
+        background-image: linear-gradient(to left, violet, indigo, blue, green, yellow, orange, red);
+        background-clip: text;
+    }
+}
