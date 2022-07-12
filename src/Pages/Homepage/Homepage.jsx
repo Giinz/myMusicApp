@@ -23,9 +23,9 @@ const Homepage = () => {
                 <h2>AN ONLINE MUSIC PLAYER</h2>
             </div>
             <div className="Homepage__login">
-                <Input type='text' name='username' hasVal={!!userForm.username} placeHolder='username' value={userForm.username} handleChange={handleChange} />
-                <Input type='password' name='password' hasVal={!!userForm.password} placeHolder='password' value={userForm.password} handleChange={handleChange} />
-                <Link to='music'><Button value='Login' /></Link>
+                {/* <Input type='text' name='username' hasVal={!!userForm.username} placeHolder='username' value={userForm.username} handleChange={handleChange} />
+                <Input type='password' name='password' hasVal={!!userForm.password} placeHolder='password' value={userForm.password} handleChange={handleChange} /> */}
+                <Link to='music'><Button value='Listen to Music' /></Link>
 
             </div>
         </div>
