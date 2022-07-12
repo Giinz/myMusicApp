@@ -26,21 +26,6 @@
             background-color: #cccccc;
             cursor: not-allowed;    
         }
-        &::after{
-            content: "";
-            width: 30px;
-            height: 30px;
-            border-radius: 100%;
-            border: 2px solid #dfdfdf;
-            position: absolute;
-            top: 15%;
-            left: 45%;
-            transform: translate(-50%, -50%);
-            animation: ring 1.5s ease infinite;
-        }
+        
     }
-}
-@keyframes ring {
-    0% {-webkit-transform:scale(1); }
-    100% {-webkit-transform:scale(8); opacity:0;}
 }

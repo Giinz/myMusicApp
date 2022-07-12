@@ -1,0 +1,10 @@
+.controlButton{
+    display: flex;
+    align-items: center;
+    i:hover{
+        color: rgb(85, 95, 185);
+    }
+    i[name="playBtn"]{
+        font-size: 30px;
+    }
+}

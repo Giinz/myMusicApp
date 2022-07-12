@@ -1,5 +1,5 @@
 import './Input.scss'
-const Input =({type,value,handleChange,placeHolder,hasVal,isValid, name, handleFocus, autoFocus})=>{
+const Input =({type,value,handleChange,placeHolder,hasVal,step, min, max, name, handleFocus, autoFocus,style })=>{
     return (
         <div className="Input">          
             <input
@@ -10,8 +10,12 @@ const Input =({type,value,handleChange,placeHolder,hasVal,isValid, name, handleF
                 name={name}
                 onFocus={handleFocus}
                 autoFocus={autoFocus}
+                step={step}
+                min={min}
+                max={max}
+                style={style}
             />
-            <span className="Input__label" data-placeholder={placeHolder}></span>
+            <span className="Input__label" data-placeholder={placeHolder}/>
 
         </div>
     )
