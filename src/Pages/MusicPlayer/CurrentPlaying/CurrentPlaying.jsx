@@ -1,18 +1,19 @@
 import Image from "../../../Components/Image/Image";
 import Button from "../../../Components/Button/Button";
-import { useLocation, useNavigate } from "react-router-dom";
-import { useEffect, useState, useRef } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { useEffect, useState, useRef, useContext } from "react";
 import NavBar from "../Navbar/Navbar";
 import axios from "axios";
+import { ListSongContext } from "../MusicPage";
 
 const CurrentPlaying = () => {
+  const listSong = useContext(ListSongContext);
+  const [songSource, setSongSource] = useState("");
   const [progressPercent, setProgressPercent] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isRepeat, setIsRepeat] = useState(false);
   const [isShuffle, setIsShuffle] = useState(false);
-  console.log(isShuffle)
-  const { state } = useLocation();
-  const { obj } = state;
+  const param = useParams();
   const audioRef = useRef();
   const navigate = useNavigate();
 
@@ -23,9 +24,10 @@ const CurrentPlaying = () => {
         (audio.currentTime / audio.duration) * 100
       );
       setProgressPercent(currentProgressPercent);
-      if (audio.currentTime >= audio.duration && isRepeat ==false) handleNextSong();
-      if (audio.currentTime >= audio.duration && isRepeat ==true) setProgressPercent(0);
-
+      if (audio.currentTime >= audio.duration && isRepeat == false)
+        handleNextSong();
+      if (audio.currentTime >= audio.duration && isRepeat == true)
+        setProgressPercent(0);
     }
   };
   const progressChange = (e) => {
@@ -47,102 +49,86 @@ const CurrentPlaying = () => {
     }
     setIsPlaying(!isPlaying);
   };
-  const handleNextSong = async () => {
-    const nextSong = obj.songList.find(
-      (song) => isShuffle? song.position == Math.floor(Math.random()*100+1) :song.position == obj.songPosition + 1
+  const handleNextSong = () => {
+    const currentSong = listSong.find((song) => song.id == songSource.id);
+    const nextSong = listSong.find((song) =>
+      isShuffle
+        ? song.position == Math.floor(Math.random() * 100 + 1)
+        : song.position == currentSong.position + 1
     );
-    const nextSongSource = await (
-      await axios.get(
-        `https://mp3.zing.vn/xhr/media/get-source?type=audio&key=${nextSong.code}`
-      )
-    ).data.data.source["128"];
-    const nextSongData = {
-      songName: nextSong.name,
-      songCode: nextSong.code,
-      songPerformer: nextSong.performer,
-      songThumbnail: nextSong.thumbnail,
-      songSource: nextSongSource,
-      songPosition: nextSong.position,
-      songList: obj.songList,
-      songId: nextSong.id,
-    };
-    navigate(`../${nextSong.id}`, { state: { obj: nextSongData } });
+    navigate(`../${nextSong.code}`);
   };
-  const handlePrevSong = async () => {
-    const prevSong = obj.songList.find(
-      (song) => isShuffle? song.position == Math.floor(Math.random()*100+1) :song.position == obj.songPosition - 1
-
+  const handlePrevSong = () => {
+    const currentSong = listSong.find((song) => song.id == songSource.id);
+    const prevSong = listSong.find((song) =>
+      isShuffle
+        ? song.position == Math.floor(Math.random() * 100 + 1)
+        : song.position == currentSong.position - 1
     );
-    const prevSongSource = await (
-      await axios.get(
-        `https://mp3.zing.vn/xhr/media/get-source?type=audio&key=${prevSong.code}`
-      )
-    ).data.data.source["128"];
-
-    const prevSongData = {
-      songName: prevSong.name,
-      songCode: prevSong.code,
-      songPerformer: prevSong.performer,
-      songThumbnail: prevSong.thumbnail,
-      songSource: prevSongSource,
-      songPosition: prevSong.position,
-      songList: obj.songList,
-      songId: prevSong.id,
-    };
-
-    navigate(`../${prevSong.id}`, { state: { obj: prevSongData } });
+    navigate(`../${prevSong.code}`);
   };
   const handeRepeatBtn = () => {
-    setIsRepeat(!isRepeat)
+    setIsRepeat(!isRepeat);
   };
   const handleShuffleBtn = () => {
-    setIsShuffle(!isShuffle)
-  }
+    setIsShuffle(!isShuffle);
+  };
 
   useEffect(() => {
+    const songApi = `https://mp3.zing.vn/xhr/media/get-source?type=audio&key=${param.songCode}`;
+    const getSource = async () => {
+      const audioSource = await axios.get(songApi);
+      setSongSource(audioSource.data.data);
+    };
+    getSource();
     setIsPlaying(true);
-  }, [state]);
+  }, [param]);
   useEffect(() => {
-    isPlaying ? audioRef.current.play() : audioRef.current.pause();
+    if (!!songSource) {
+      isPlaying ? audioRef.current.play() : audioRef.current.pause();
+    }
   });
 
-  return (
-    <div className="MusicPlaying">
-      <div className="MusicPage__currentSong">
-        <Image imgSrc={obj.songThumbnail} />
-        <div className="currentSong__title">
-          <h1>{obj.songName}</h1>
-          <p>{obj.songPerformer}</p>
+  if (!!songSource) {
+    return (
+      <div className="MusicPlaying">
+        <div className="MusicPage__currentSong">
+          <Image imgSrc={songSource.thumbnail} />
+          <div className="currentSong__title">
+            <h1>{songSource.name}</h1>
+            <p>{songSource.performer}</p>
+          </div>
+          <Button
+            handleClick={handlePlayBtn}
+            value={isPlaying ? "Pause" : "Play"}
+            icon={isPlaying ? "fa-solid fa-pause" : "fa-solid fa-play"}
+          />
+          <audio
+            onTimeUpdate={onTimeUpdate}
+            src={songSource.source["128"]}
+            ref={audioRef}
+            typeof="audio/mp3"
+          ></audio>
         </div>
-        <Button
-          handleClick={handlePlayBtn}
-          value={isPlaying ? "Pause" : "Play"}
-          icon={isPlaying ? "fa-solid fa-pause" : "fa-solid fa-play"}
-        />
-        <audio
-          onTimeUpdate={onTimeUpdate}
-          src={obj.songSource}
-          ref={audioRef}
-          typeof="audio/mp3"
-        ></audio>
+        <div className="MusicPage__progress">
+          <NavBar
+            isPlaying={isPlaying}
+            progressValue={progressPercent || 0}
+            progressChange={progressChange}
+            handlePlay={handlePlayBtn}
+            handleNext={handleNextSong}
+            handlePrev={handlePrevSong}
+            style={getBackgroundSize()}
+            handleRepeat={handeRepeatBtn}
+            isRepeat={isRepeat}
+            isShuffle={isShuffle}
+            handleShuffle={handleShuffleBtn}
+          />
+        </div>
       </div>
-      <div className="MusicPage__progress">
-        <NavBar
-          isPlaying={isPlaying}
-          progressValue={progressPercent || 0}
-          progressChange={progressChange}
-          handlePlay={handlePlayBtn}
-          handleNext={handleNextSong}
-          handlePrev={handlePrevSong}
-          style={getBackgroundSize()}
-          handleRepeat={handeRepeatBtn}
-          isRepeat={isRepeat}
-          isShuffle={isShuffle}
-          handleShuffle={handleShuffleBtn}
-        />
-      </div>
-    </div>
-  );
+    );
+  }
+  return <>Loading....</>;
 };
 
 export default CurrentPlaying;

@@ -1,7 +1,7 @@
 import './App.scss';
 import Homepage from './Pages/Homepage/Homepage';
 import MusicPage from './Pages/MusicPlayer/MusicPage';
-import {Routes, Route, useLocation} from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import CurrentPlaying from './Pages/MusicPlayer/CurrentPlaying/CurrentPlaying';
 import IndexSong from './Pages/MusicPlayer/IndexSong/IndexSong';
 
@@ -13,7 +13,7 @@ function App() {
         <Route path='/' element={<Homepage />}/>
         <Route path='music' element={<MusicPage />} >
           <Route index element={<IndexSong/>}/>
-          <Route path={`:songCode`} element={<CurrentPlaying/>}/>
+          <Route path={`/music/:songCode`} element={<CurrentPlaying/>}/>
         </Route>
       </Routes>
     </div>

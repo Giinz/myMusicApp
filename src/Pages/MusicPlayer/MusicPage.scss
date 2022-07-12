@@ -64,6 +64,10 @@
       }
       .List__item.selected {
         background-color: hsla(0deg, 0%, 100%, 0.1);
+        .Song__name>p{
+          color: rgb(85, 95, 185);
+        }
+        
       }
       .List__item {
         display: flex;
